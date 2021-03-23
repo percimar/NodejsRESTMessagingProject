@@ -12,7 +12,6 @@ let connection
 app.use(express.static('webfiles'))
 app.use(express.json())
 app.use(cookieParser())
-var shasum = crypto.createHash('sha1')
 
 // createDB()
 
@@ -20,20 +19,7 @@ function logMessage(m) {
     console.log(new Date() + ":" + m)
 }
 
-let allUsers = []
-allUsers.push(
-    { id: 1, username: "u1", type: "regular", password: "hello" },
-    { id: 2, username: "u2", type: "regular", password: "world" },
-    { id: 3, username: "admin", type: "admin", password: "12class34" }
-)
-
-let allContacts = [
-    { id: 1, name: 'John', phone: 34858945 },
-    { id: 2, name: 'Jane', phone: 59748974 },
-    { id: 3, name: 'Jill', phone: 23494850 },
-    { id: 4, name: 'Jake', phone: 84798735 },
-    { id: 5, name: 'Jebb', phone: 34786545 }
-]
+let allContacts = []
 
 app.get('/api/contacts', (req, res) => {
     try {
@@ -41,13 +27,24 @@ app.get('/api/contacts', (req, res) => {
         let userDetails = jwt.verify(authToken, appSecretKey)
         if (userDetails) {
             logMessage("All Contacts")
-            res.send({ allContacts: allContacts, type: userDetails.type })
+            handleConnect()
+            connection.query('SELECT * FROM users', function (error, results, fields) {
+                if (results.length > 0) {
+                    results.map(user => allContacts.push(user))
+                    res.send({ allContacts: allContacts, user: userDetails })
+                } else {
+                    res.status(401)
+                    res.send("Invalid db query")
+                }
+            });
         }
+        allContacts = []
     }
     catch (e) {
         res.status(401)
         res.send('not authorized')
     }
+    handleDisconnect()
 })
 
 app.get('/api/contact/:id', (req, res) => {
@@ -63,13 +60,6 @@ app.get('/api/contact/:id', (req, res) => {
     res.send(elt)
 })
 
-app.post('/api/auth', (req, res) => {
-    let username = req.body.username
-    let password = req.body.password
-    logMessage("The password is: " + password)
-    logMessage("The username is: " + username)
-    res.send("")
-})
 
 app.put('/api/contact/:id', (req, res) => {
     let elt = allContacts.find((e) => e.id == req.params.id)
@@ -110,16 +100,17 @@ app.delete('/api/contacts/:id', (req, res) => {
     res.send("Contact deleted")
 })
 
+//DONE
 app.post('/api/login', (req, res) => {
     handleConnect()
     let u = req.body.username
     let p = req.body.password
+    let shasum = crypto.createHash('sha1')
     shasum.update('ama' + p)
     p = shasum.digest('hex')
 
     if (u && p) {
         connection.query('SELECT * FROM users WHERE username = ? AND password = ?', [u, p], function (error, results, fields) {
-
             if (results.length > 0) {
                 let userInfo = {
                     name: results[0].username,
@@ -141,63 +132,14 @@ app.post('/api/login', (req, res) => {
         res.status(401)
         res.send('Please enter Username and Password!');
     }
-    handleDisconnect(connection)
+    handleDisconnect()
 })
 
+//DONE
 app.post('/api/logout', (req, res) => {
-    // do nothing here for now but maybe we could record the action in the log
     res.cookie('contact-token', '', { expires: new Date(Date.now() - 1) })
     res.send('ok')
 })
-
-
-app.listen(port, () => {
-    console.log("The application has started")
-})
-
-// useless code
-// function createDB() {
-//     con = mysql.createConnection({
-//         host: 'localhost',
-//         user: 'root',
-//         password: ''
-//     });
-//     con.connect(function (err) {
-//         if (err) throw err;
-//         console.log("Connected!");
-//         con.query("CREATE DATABASE jenkins", function (err, result) {
-//             if (err) throw err;
-//             console.log("Database created");
-//         });
-//     });
-
-//     con = mysql.createConnection({
-//         host: 'localhost',
-//         user: 'root',
-//         password: '',
-//         database: 'jenkins'
-//     })
-//     con.connect(function (err) {
-//         if (err) throw err;
-//         var sql = "CREATE TABLE users (id INT(11), name VARCHAR(255), password VARCHAR(255), role VARCHAR(255))";
-//         con.query(sql, function (err, result) {
-//             if (err) throw err;
-//             console.log("Table created");
-//         });
-//         var sql = "INSERT INTO users (id, name, password, role) VALUES ?";
-//         var values = [
-//             [1, 'Admin', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'admin'],
-//             [2, 'Aahmad', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'],
-//             [3, 'Asmar', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'],
-//             [4, 'Mahmoud', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'],
-//         ];
-//         con.query(sql, [values], function (err, result) {
-//             if (err) throw err;
-//             console.log("Number of records inserted: " + result.affectedRows);
-//         });
-//     });
-// }
-
 
 function handleConnect() {
     connection = mysql.createConnection({
@@ -209,23 +151,22 @@ function handleConnect() {
     connection.connect()
 }
 
-function handleDisconnect(connection) {
+function handleDisconnect() {
     connection.end()
     connection.on('error', function (err) {
         if (!err.fatal) {
             return;
         }
-
         if (err.code !== 'PROTOCOL_CONNECTION_LOST') {
             throw err;
         }
-
         console.log('Re-connecting lost connection: ' + err.stack);
-
         connection = mysql.createConnection(connection.config);
         handleDisconnect(connection);
         connection.connect();
     });
 }
 
-
+app.listen(port, () => {
+    console.log("The application has started")
+})

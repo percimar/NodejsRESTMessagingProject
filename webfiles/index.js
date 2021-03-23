@@ -13,11 +13,10 @@ function doLogin() {
         contentType: "application/json",
         data: JSON.stringify(loginRequest),
         success: function (result) {
-            window.location.href = "/fulllist.html"
+            window.location.href = "/amaChat.html"
         },
         error: function (j, t, e) {
             alert("Go away!")
-            console.log(e);
         }
 
     })
