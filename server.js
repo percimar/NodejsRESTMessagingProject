@@ -1,17 +1,20 @@
 let express = require("express")
 let jwt = require('jsonwebtoken')
 let cookieParser = require('cookie-parser')
+let mysql = require('mysql')
+let crypto = require('crypto')
+
 let app = express()
 let port = 3000
 let appSecretKey = 'dfhvbejr34r4ifh3nrjg4n3jnk3fcj49jve23hbhgcaslak'
-let mysql = require('mysql')
 let connection
 
 app.use(express.static('webfiles'))
 app.use(express.json())
 app.use(cookieParser())
+var shasum = crypto.createHash('sha1')
 
-
+// createDB()
 
 function logMessage(m) {
     console.log(new Date() + ":" + m)
@@ -111,9 +114,12 @@ app.post('/api/login', (req, res) => {
     handleConnect()
     let u = req.body.username
     let p = req.body.password
+    shasum.update('ama' + p)
+    p = shasum.digest('hex')
 
     if (u && p) {
         connection.query('SELECT * FROM users WHERE username = ? AND password = ?', [u, p], function (error, results, fields) {
+
             if (results.length > 0) {
                 let userInfo = {
                     name: results[0].username,
@@ -121,14 +127,17 @@ app.post('/api/login', (req, res) => {
                 }
                 let token = jwt.sign(userInfo, appSecretKey, { expiresIn: 600 })
                 res.cookie('contact-token', token, { httpOnly: true })
+                console.log('succadic')
                 res.status(200)
                 res.send("ok")
             } else {
+                console.log('wrong user or pass')
                 res.status(401)
                 res.send("Invalid Credentials")
             }
         });
     } else {
+        console.log('no user or pass')
         res.status(401)
         res.send('Please enter Username and Password!');
     }
@@ -146,7 +155,48 @@ app.listen(port, () => {
     console.log("The application has started")
 })
 
+// useless code
+// function createDB() {
+//     con = mysql.createConnection({
+//         host: 'localhost',
+//         user: 'root',
+//         password: ''
+//     });
+//     con.connect(function (err) {
+//         if (err) throw err;
+//         console.log("Connected!");
+//         con.query("CREATE DATABASE jenkins", function (err, result) {
+//             if (err) throw err;
+//             console.log("Database created");
+//         });
+//     });
 
+//     con = mysql.createConnection({
+//         host: 'localhost',
+//         user: 'root',
+//         password: '',
+//         database: 'jenkins'
+//     })
+//     con.connect(function (err) {
+//         if (err) throw err;
+//         var sql = "CREATE TABLE users (id INT(11), name VARCHAR(255), password VARCHAR(255), role VARCHAR(255))";
+//         con.query(sql, function (err, result) {
+//             if (err) throw err;
+//             console.log("Table created");
+//         });
+//         var sql = "INSERT INTO users (id, name, password, role) VALUES ?";
+//         var values = [
+//             [1, 'Admin', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'admin'],
+//             [2, 'Aahmad', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'],
+//             [3, 'Asmar', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'],
+//             [4, 'Mahmoud', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'],
+//         ];
+//         con.query(sql, [values], function (err, result) {
+//             if (err) throw err;
+//             console.log("Number of records inserted: " + result.affectedRows);
+//         });
+//     });
+// }
 
 
 function handleConnect() {
