@@ -53,10 +53,13 @@ app.get('/api/messages', (req, res) => {
         let authToken = req.cookies['contact-token']
         let userDetails = jwt.verify(authToken, appSecretKey)
         if (userDetails) {
-            if (userDetails.name === "admin") {
+            if (userDetails.name === "Admin") {
                 logMessage("All Contacts")
                 handleConnect()
-                connection.query('SELECT * FROM messages', function (error, results, fields) {
+                connection.query(`SELECT m.*, u1.username AS senderName, u2.username AS receiverName
+                                    FROM messages AS m 
+                                    JOIN users AS u1 ON u1.id = m.sender 
+                                    JOIN users AS u2 ON u2.id = m.receiver`, function (error, results, fields) {
                     if (results.length > 0) {
                         results.map(user => allMessages.push(user))
                         res.send({ allMessages: allMessages, user: userDetails })
@@ -74,24 +77,25 @@ app.get('/api/messages', (req, res) => {
                                     JOIN users AS u1 ON u1.id = m.sender 
                                     JOIN users AS u2 ON u2.id = m.receiver 
                                     WHERE receiver = ${userDetails.id} or sender = ${userDetails.id}`, function (error, results, fields) {
-                if (results.length > 0) {
-                    results.map(message => allMessages.push(message))
-                    console.log("helo" + results)
-                    res.send({ allMessages: allMessages, user: userDetails })
-                } else {
-                    res.status(401)
-                    res.send("Invalid db query")
-                }});
+                    if (results.length > 0) {
+                        results.map(message => allMessages.push(message))
+                        console.log("helo" + results)
+                        res.send({ allMessages: allMessages, user: userDetails })
+                    } else {
+                        res.status(401)
+                        res.send("Invalid db query")
+                    }
+                });
             };
         }
-        
+
         allMessages = []
-}
+    }
     catch (e) {
-    res.status(401)
-    res.send('not authorized')
-}
-handleDisconnect()
+        res.status(401)
+        res.send('not authorized')
+    }
+    handleDisconnect()
 })
 
 app.post('/api/messages', (req, res) => {
@@ -136,11 +140,10 @@ app.post('/api/login', (req, res) => {
                 }
                 let token = jwt.sign(userInfo, appSecretKey, { expiresIn: 10000 })
                 res.cookie('contact-token', token, { httpOnly: true })
-                console.log('succadic')
+                console.log('logged in')
                 res.status(200)
-                res.send("ok")
+                res.send(token)
             } else {
-                console.log('wrong user or pass')
                 res.status(401)
                 res.send("Invalid Credentials")
             }

@@ -54,26 +54,50 @@ function loadMessages() {
                 <th>Message</th>
                 <th>Sent At</th>
             </tr>`
+            let allMsg = `
+            <table style="width:100%;text-align: center;" id="sent_messages_list">
+            <tr>
+                <th>Message</th>
+                <th>Sender</th>
+                <th>Receiver</th>
+                <th>Received At</th>
+            </tr>`
             console.log('data', data)
             console.log('length', data.allMessages.length)
             data.allMessages.forEach((a) => {
                 console.log('senderName', a.receiverName)
                 if (data.allMessages.length > 0) {
-                    if (a.receiverName === data.user.name) {
-                        receivedMsg +=
+                    if (data.user.name === "Admin") {
+                        $("#data").attr('style', 'display: none;')
+                        allMsg +=  
                             `<tr>
+                            <td>${a.message}</td>
+                            <td>${a.senderName}</td>
+                            <td>${a.receiverName}</td>
+                            <td>${a.date}</td>
+                        </tr>`
+                        $("#allMessages").html(allMsg)
+                    }
+                    else {
+                        $("#allMessages").attr('style', 'display: none;')
+                        $("#allMsg").attr('style', 'display: none;')
+                        if (a.receiverName === data.user.name) {
+                            receivedMsg +=
+                                `<tr>
                             <td>${a.message}</td>
                             <td>${a.senderName}</td>
                             <td>${a.date}</td>
                         </tr>`
-                    }
-                    if (a.senderName === data.user.name) {
-                        sentMsgs +=
-                            `<tr>
+                        }
+                        if (a.senderName === data.user.name) {
+                            sentMsgs +=
+                                `<tr>
                                 <td>${a.message}</td>
                                 <td>${a.date}</td>
                             </tr>`
+                        }
                     }
+
                 }
                 else {
                     receivedMsg +=

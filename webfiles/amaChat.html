@@ -33,7 +33,7 @@
                 <div class="widget-title bg_lg"><span class="icon"><i class="icon-envelope"></i></span>
                     <h5>AMA Messenger</h5>
                     <button id='logout-button' class="btn btn-primary"
-                        style=" margin-left: 1600px;  margin-top: 3px;">Logout</button>
+                        style=" margin-left: 1000px;  margin-top: 3px;">Logout</button>
                 </div>
                 <div class="widget-content">
                     <label for="contact-list">Send Message To:</label>
@@ -49,7 +49,7 @@
                                 <button class="btn btn-success" onclick="submitMessage()">Send</button>
                             </div>
                         </div>
-                        <div style="width: auto;height: auto;">
+                        <div style="width: auto;height: auto;" id="data">
                             <div style="display: inline-block; width: 49%; vertical-align: top;">
                                 <h2 style="text-align: center;">Received Messages</h2>
                             </div>
@@ -61,6 +61,14 @@
                             </div>
                             <div style="display: inline-block; width: 49%; align-items: left; border: rgb(15, 75, 55); border-style: solid; vertical-align: top;"
                                 id='sent_messages_list'>
+                            </div>
+                        </div>
+                        <div style="width: auto;height: auto;" id="allMsg">
+                            <div style="display: inline-block; width: 100%; vertical-align: top;">
+                                <h2 style="text-align: center;">All Messages</h2>
+                            </div>
+                            <div style="display: inline-block; width: 100%; align-items: left; border: rgb(15, 75, 55); border-style: solid; vertical-align: top;"
+                                id='allMessages'>
                             </div>
                         </div>
                         <span id="noMessages"></span>
