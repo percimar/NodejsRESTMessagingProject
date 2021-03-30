@@ -20,6 +20,7 @@ function logMessage(m) {
 }
 
 let allContacts = []
+let allMessages = []
 
 app.get('/api/contacts', (req, res) => {
     try {
@@ -47,57 +48,73 @@ app.get('/api/contacts', (req, res) => {
     handleDisconnect()
 })
 
-app.get('/api/contact/:id', (req, res) => {
-    let elt = allContacts.find((e) => {
-        return e.id == req.params.id
-    })
-    if (!elt) {
-        res.status(404)
-        res.send("Contact not found")
-        return
-    }
-    logMessage("Contact Found")
-    res.send(elt)
-})
-
-
-app.put('/api/contact/:id', (req, res) => {
-    let elt = allContacts.find((e) => e.id == req.params.id)
-    if (!elt) {
-        res.status(404)
-        res.send('not found')
-        return
-    }
-    elt.name = req.body.newName
-    elt.phone = req.body.newPhone
-    logMessage("Contact Updated")
-    console.log(req.body)
-    res.send('Contact Updated')
-})
-
-app.post('/api/contact', (req, res) => {
-    let maxId = 0
-    allContacts.forEach((e) => {
-        if (e.id > maxId) {
-            maxId = e.id
+app.get('/api/messages', (req, res) => {
+    try {
+        let authToken = req.cookies['contact-token']
+        let userDetails = jwt.verify(authToken, appSecretKey)
+        if (userDetails) {
+            if (userDetails.name === "admin") {
+                logMessage("All Contacts")
+                handleConnect()
+                connection.query('SELECT * FROM messages', function (error, results, fields) {
+                    if (results.length > 0) {
+                        results.map(user => allMessages.push(user))
+                        res.send({ allMessages: allMessages, user: userDetails })
+                    } else {
+                        res.status(401)
+                        res.send("Invalid db query")
+                    }
+                });
+            }
+            else {
+                logMessage("All Contacts")
+                handleConnect()
+                connection.query(`SELECT m.*, u1.username AS senderName, u2.username AS receiverName
+                                    FROM messages AS m 
+                                    JOIN users AS u1 ON u1.id = m.sender 
+                                    JOIN users AS u2 ON u2.id = m.receiver 
+                                    WHERE receiver = ${userDetails.id} or sender = ${userDetails.id}`, function (error, results, fields) {
+                if (results.length > 0) {
+                    results.map(message => allMessages.push(message))
+                    console.log("helo" + results)
+                    res.send({ allMessages: allMessages, user: userDetails })
+                } else {
+                    res.status(401)
+                    res.send("Invalid db query")
+                }});
+            };
         }
-    })
-    maxId++
-    let obj = {
-        id: maxId,
-        name: req.body.name,
-        phone: req.body.phone
-    }
-    allContacts.push(obj)
-    res.status(201)
-    res.set('Location', `/api/contacts/${maxId}`)
-    res.send("created")
+        
+        allMessages = []
+}
+    catch (e) {
+    res.status(401)
+    res.send('not authorized')
+}
+handleDisconnect()
 })
 
-app.delete('/api/contacts/:id', (req, res) => {
-    let id = Number(req.params.id)
-    allContacts = allContacts.filter(a => a.id !== id)
-    res.send("Contact deleted")
+app.post('/api/messages', (req, res) => {
+    let authToken = req.cookies['contact-token']
+    let userDetails = jwt.verify(authToken, appSecretKey)
+    let obj = {
+        message: req.body.message,
+        sender: userDetails.id,
+        receiver: req.body.receiver,
+        date: new Date()
+    }
+    handleConnect()
+    connection.query(`INSERT INTO messages (message, sender, receiver, date) VALUES ('${obj.message}','${obj.sender}','${obj.receiver}','${obj.date.toMysqlFormat()}');`, function (error, results, fields) {
+        console.log("error", error);
+        if (!error) {
+            res.status(201)
+            res.send("added message to db")
+        } else {
+            res.status(401)
+            res.send("Could not be added to db")
+        }
+    });
+    handleDisconnect()
 })
 
 //DONE
@@ -114,9 +131,10 @@ app.post('/api/login', (req, res) => {
             if (results.length > 0) {
                 let userInfo = {
                     name: results[0].username,
-                    type: results[0].role
+                    type: results[0].role,
+                    id: results[0].id
                 }
-                let token = jwt.sign(userInfo, appSecretKey, { expiresIn: 600 })
+                let token = jwt.sign(userInfo, appSecretKey, { expiresIn: 10000 })
                 res.cookie('contact-token', token, { httpOnly: true })
                 console.log('succadic')
                 res.status(200)
@@ -170,3 +188,15 @@ function handleDisconnect() {
 app.listen(port, () => {
     console.log("The application has started")
 })
+
+
+//JS TO MYSQL DATE FUNCTION
+function twoDigits(d) {
+    if (0 <= d && d < 10) return "0" + d.toString();
+    if (-10 < d && d < 0) return "-0" + (-1 * d).toString();
+    return d.toString();
+}
+
+Date.prototype.toMysqlFormat = function () {
+    return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate()) + " " + twoDigits(this.getUTCHours()) + ":" + twoDigits(this.getUTCMinutes()) + ":" + twoDigits(this.getUTCSeconds());
+};

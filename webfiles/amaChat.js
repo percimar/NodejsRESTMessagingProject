@@ -34,86 +34,113 @@ function loadContacts() {
     })
 }
 
+function loadMessages() {
+    $.ajax({
+        url: "/api/messages",
+        dataType: "json",
+        method: "get",
+        success: function (data) {
+            let receivedMsg = `
+            <table style="width:100%;text-align: center;" id="sent_messages_list">
+            <tr>
+                <th>Message</th>
+                <th>Sender</th>
+                <th>Received At</th>
+            </tr>`
+            let sentMsgs = `
+            <table style="width:100%;text-align: center;" id="sent_messages_list">
+            <tr>
+                <th>Message</th>
+                <th>Sent At</th>
+            </tr>`
+            console.log('data', data)
+            console.log('length', data.allMessages.length)
+            data.allMessages.forEach((a) => {
+                console.log('senderName', a.receiverName)
+                if (data.allMessages.length > 0) {
+                    if (a.receiverName === data.user.name) {
+                        receivedMsg +=
+                            `<tr>
+                            <td>${a.message}</td>
+                            <td>${a.senderName}</td>
+                            <td>${a.date}</td>
+                        </tr>`
+                    }
+                    if (a.senderName === data.user.name) {
+                        sentMsgs +=
+                            `<tr>
+                                <td>${a.message}</td>
+                                <td>${a.date}</td>
+                            </tr>`
+                    }
+                }
+                else {
+                    receivedMsg +=
+                        `<tr>
+                            <td></td>
+                            <td>There are no messages</td>
+                            <td></td>
+                        </tr>`
+                    sentMsg +=
+                        `<tr>
+                            <td>There are no messages</td>
+                            <td></td>
+                        </tr>`
+                }
+
+            })
+            sentMsgs += `</table>`
+            receivedMsg += `</table>`
+            $("#sent_messages_list").html(sentMsgs)
+            $("#received_messages_list").html(receivedMsg)
+        },
+        error: function (j, t, e) {
+            window.alert("Error, Invalid Details")
+            window.location.href = '/'
+        }
+    })
+}
+
 var highestMessage;
 
-function submitMessage() {
+async function submitMessage() {
     let message = $("#txtMessage").val().trim();
-    let sender = $("#txtSender").val().trim();
-    let receiver = $("#txtReceiver").val().trim();
-    let room = $("#roomNumber option:selected").val();
-
-
-    if (message === "" || sender === "" || receiver === "") {
-        alert("You have to provide a sender name, receiver name, and a message")
+    let receiver = await $("#contact-list  option:selected").val();
+    // console.log(message + "hhhhhhhhhhhhhhhhhhhhhhhhhh")
+    if (message === "" || receiver === "") {
+        alert("You have to provide a receiver name, and a message")
         return
     }
-
-    $.ajax({
-        type: "POST",
-        dataType: "JSON",
-        data: {
-            message: message,
-            sender: sender,
-            receiver: receiver,
-            room: room
-        },
-        url: "./postMessage.php",
-        success: function (data) {
-            if (data !== "OK") {
+    let userDetails = {
+        message: message,
+        receiver: receiver,
+    }
+    await $.ajax({
+        method: "post",
+        contentType: "application/json",
+        data: JSON.stringify(userDetails),
+        url: "/api/messages",
+        success: function (data, textStatus, jqXHR) {
+            if (jqXHR.status !== 201) {
                 alert("Problem with server");
             }
             else {
-                $("#txtMessage").val("");
-                $("#chat-messages").animate({ scrollTop: $("#chat-messages")[0].scrollHeight }, 1000);
-
+                window.location.href = "/amaChat.html"
             }
+        },
+        error: function (soemthing, status, error) {
+            console.log(status, error);
         }
     });
 }
 
-function updateUser() {
-    console.log("Changing user")
-    highestMessage = 0
-    $("#chat-messages-inner").html("")
-    updateMessages()
-}
+// function updateUser() {
+//     console.log("Changing user")
+//     highestMessage = 0
+//     $("#chat-messages-inner").html("")
+//     updateMessages()
+// }
 
-function updateMessages() {
-    let touser = $("#contact-list option:selected").val()
-    $.ajax({
-        type: "GET",
-        dataType: "JSON",
-        url: "./getMessages.php?startid=" + touser,
-        success: function (msg) {
-            var tableContents = "";
-            if (msg.totalMessages === 0) {
-                highestMessage = 0;
-                $("#chat-messages-inner").html("");
-            }
-            for (i = 0; i < msg.messages.length; i++) {
-
-                formattedMessage = msg.messages[i].message.split("\n").join("<br />");
-                tableContents += "<p><span class='msg-block'>"
-                    + "From <strong>" + msg.messages[i].sender + "</strong> To:<strong>"
-                    + msg.messages[i].receiver + "</strong>"
-                    + "<span class='time'>" + msg.messages[i].time + "</span>"
-                    + "<span class='msg'>" + formattedMessage + "</span></span></p>";
-
-                highestMessage = msg.messages[i].id;
-            }
-            $("#chat-messages-inner").append(tableContents);
-        }
-    });
-}
-
-$(function () {
-    $("#sidebar li").removeClass("active");
-    $("#menuLinkBoard").addClass("active");
-
-    highestMessage = 0;
-    setInterval(updateMessages, 1000);
-
-});
 
 function doLogout() {
     $.ajax({
@@ -130,5 +157,7 @@ function doLogout() {
 
 $(function () {
     loadContacts()
+    loadMessages()
+    setInterval(loadMessages, 1000);
     $("#logout-button").on('click', doLogout);
 })

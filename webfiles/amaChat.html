@@ -14,6 +14,14 @@
         .well {
             margin-bottom: 5px;
         }
+
+        #msg {
+            width: 922px;
+            height: auto;
+            border: 1px solid blueviolet;
+            float: left;
+            display: inline-block;
+        }
     </style>
 
 </head>
@@ -24,21 +32,15 @@
             <div class="widget-box">
                 <div class="widget-title bg_lg"><span class="icon"><i class="icon-envelope"></i></span>
                     <h5>AMA Messenger</h5>
+                    <button id='logout-button' class="btn btn-primary"
+                        style=" margin-left: 1600px;  margin-top: 3px;">Logout</button>
                 </div>
                 <div class="widget-content">
-                    <label for="contact-list">To User:</label>
-                    <select id="contact-list" onchange="updateUser()">
+                    <label for="contact-list">Send Message To:</label>
+                    <select id="contact-list">
                     </select>
                     <div class="row-fluid">
-                        <div class="chat-message well">
-                            <div class="control-group">
-                                <label class="span2" for="txtSender">Sender:</label>
-                                <input class="span10" id="txtSender" type="text">
-                            </div>
-                            <div class="control-group">
-                                <label class="span2" for="txtReceiver">Receiver:</label>
-                                <input class="span10" id="txtReceiver" type="text">
-                            </div>
+                        <div class="chat-message well" style="border: rgb(15, 75, 55); border-style:solid ;">
                             <div class="control-group">
                                 <label for="txtMessage">Message:</label>
                                 <textarea id="txtMessage" rows="5" class="span12"></textarea>
@@ -47,8 +49,19 @@
                                 <button class="btn btn-success" onclick="submitMessage()">Send</button>
                             </div>
                         </div>
-                        <div class="chat-messages" id="chat-messages">
-                            <div id="chat-messages-inner"></div>
+                        <div style="width: auto;height: auto;">
+                            <div style="display: inline-block; width: 49%; vertical-align: top;">
+                                <h2 style="text-align: center;">Received Messages</h2>
+                            </div>
+                            <div style="display: inline-block; width: 49%; vertical-align: top;">
+                                <h2 style="text-align: center;">Sent Messages</h2>
+                            </div>
+                            <div style="display: inline-block; width: 49%;align-items: right; border: rgb(15, 75, 55); border-style: solid; vertical-align: top;"
+                                id='received_messages_list'>
+                            </div>
+                            <div style="display: inline-block; width: 49%; align-items: left; border: rgb(15, 75, 55); border-style: solid; vertical-align: top;"
+                                id='sent_messages_list'>
+                            </div>
                         </div>
 
                     </div>
@@ -56,9 +69,6 @@
             </div>
         </div>
     </div>
-
-    <button id='logout-button' style=" margin-left: 30%;">Logout</button>
-
     <script src="jquery-3.5.1.min.js"></script>
     <script src="amaChat.js"></script>
 </body>
