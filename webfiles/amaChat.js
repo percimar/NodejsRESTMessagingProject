@@ -40,6 +40,7 @@ function loadMessages() {
         dataType: "json",
         method: "get",
         success: function (data) {
+            $("#noMessages").html(``)
             let receivedMsg = `
             <table style="width:100%;text-align: center;" id="sent_messages_list">
             <tr>
@@ -95,8 +96,7 @@ function loadMessages() {
             $("#received_messages_list").html(receivedMsg)
         },
         error: function (j, t, e) {
-            window.alert("Error, Invalid Details")
-            window.location.href = '/'
+            $("#noMessages").html(`<h1 style="text-align:center">There are no messages</h1>`)
         }
     })
 }
