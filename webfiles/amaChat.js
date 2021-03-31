@@ -67,7 +67,7 @@ function loadMessages() {
             data.allMessages.forEach((a) => {
                 console.log('senderName', a.receiverName)
                 if (data.allMessages.length > 0) {
-                    if (data.user.name === "Admin") {
+                    if (data.user.name === "admin") {
                         $("#data").attr('style', 'display: none;')
                         allMsg +=  
                             `<tr>

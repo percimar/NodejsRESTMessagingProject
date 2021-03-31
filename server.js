@@ -34,7 +34,7 @@ app.get('/api/contacts', (req, res) => {
                     results.map(user => allContacts.push(user))
                     res.send({ allContacts: allContacts, user: userDetails })
                 } else {
-                    res.status(401)
+                    res.status(500)
                     res.send("Invalid db query")
                 }
             });
@@ -53,7 +53,7 @@ app.get('/api/messages', (req, res) => {
         let authToken = req.cookies['contact-token']
         let userDetails = jwt.verify(authToken, appSecretKey)
         if (userDetails) {
-            if (userDetails.name === "Admin") {
+            if (userDetails.name === "admin") {
                 logMessage("All Contacts")
                 handleConnect()
                 connection.query(`SELECT m.*, u1.username AS senderName, u2.username AS receiverName
@@ -64,8 +64,8 @@ app.get('/api/messages', (req, res) => {
                         results.map(user => allMessages.push(user))
                         res.send({ allMessages: allMessages, user: userDetails })
                     } else {
-                        res.status(401)
-                        res.send("Invalid db query")
+                        res.status(200)
+                        res.send("no messages found")
                     }
                 });
             }
@@ -79,11 +79,11 @@ app.get('/api/messages', (req, res) => {
                                     WHERE receiver = ${userDetails.id} or sender = ${userDetails.id}`, function (error, results, fields) {
                     if (results.length > 0) {
                         results.map(message => allMessages.push(message))
-                        console.log("helo" + results)
+                        // console.log("helo" + results)
                         res.send({ allMessages: allMessages, user: userDetails })
                     } else {
-                        res.status(401)
-                        res.send("Invalid db query")
+                        res.status(200)
+                        res.send("no messages found")
                     }
                 });
             };
@@ -98,27 +98,39 @@ app.get('/api/messages', (req, res) => {
     handleDisconnect()
 })
 
-app.post('/api/messages', (req, res) => {
-    let authToken = req.cookies['contact-token']
-    let userDetails = jwt.verify(authToken, appSecretKey)
-    let obj = {
-        message: req.body.message,
-        sender: userDetails.id,
-        receiver: req.body.receiver,
-        date: new Date()
-    }
-    handleConnect()
-    connection.query(`INSERT INTO messages (message, sender, receiver, date) VALUES ('${obj.message}','${obj.sender}','${obj.receiver}','${obj.date.toMysqlFormat()}');`, function (error, results, fields) {
-        console.log("error", error);
-        if (!error) {
-            res.status(201)
-            res.send("added message to db")
+app.post('/api/messages', async (req, res) => {
+
+    try {
+        let authToken = req.cookies['contact-token']
+        let userDetails = jwt.verify(authToken, appSecretKey)
+        let message = req.body.message
+        let sender = userDetails.id
+        let receiver = req.body.receiver
+        let date = new Date()
+        if (userDetails) {
+            try {
+                await handleConnect()
+                await connection.query(`INSERT INTO messages (message, sender, receiver, date) VALUES ('${message}','${sender}','${receiver}','${date.toMysqlFormat()}');`, function (error, results, fields) {
+                    console.log("error", error);
+                    if (!error) {
+                        res.status(201)
+                        res.send("added message to db")
+                    } else {
+                        res.status(401)
+                        res.send("Could not be added to db")
+                    }
+                });
+            } catch{
+                (e) => console.log(e);
+            }
         } else {
             res.status(401)
-            res.send("Could not be added to db")
+            res.send('not authorized')
         }
-    });
-    handleDisconnect()
+    } catch{
+        (e) => console.log(e);
+    }
+    await handleDisconnect()
 })
 
 //DONE

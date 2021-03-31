@@ -26,7 +26,7 @@ CREATE TABLE messages
 );
 
 INSERT INTO users (id, username, password, role) VALUES 
-(1, 'Admin', '2e150d98a463a6b6c86582a38791c6341117be6f', 'admin'),
-(2, 'Aahmad', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'),
-(3, 'Asmar', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'),
-(4, 'Mahmoud', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular');
+(1, 'admin', '2e150d98a463a6b6c86582a38791c6341117be6f', 'admin'),
+(2, 'aahmad', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'),
+(3, 'asmar', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'),
+(4, 'mahmoud', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular');
