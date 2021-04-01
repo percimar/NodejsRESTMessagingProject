@@ -6,7 +6,10 @@ const crypto = require("crypto");
 
 const app = express();
 const portArg = process.argv[2];
-const port = portArg ? portArg : 3000;
+const userArg = process.argv[3];
+const pwArg = process.argv[4];
+const dbArg = process.argv[5];
+const port = portArg ? portArg : 3001;
 const appSecretKey = "dfhvbejr34r4ifh3nrjg4n3jnk3fcj49jve23hbhgcaslak";
 let connection;
 
@@ -187,9 +190,9 @@ app.post("/api/logout", (req, res) => {
 function handleConnect() {
     connection = mysql.createConnection({
         host: "localhost",
-        user: "root",
-        password: "",
-        database: "jenkins",
+        user: userArg ? userArg : "root",
+        password: pwArg ? pwArg : "",
+        database: dbArg ? dbArg : "jenkins",
     });
     connection.connect();
 }

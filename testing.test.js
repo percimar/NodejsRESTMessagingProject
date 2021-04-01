@@ -11,7 +11,7 @@ axios.defaults.adapter = require("axios/lib/adapters/http");
 
 describe("Get /login Tests", () => {
     test("Test login successfuly", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "aahmad",
             password: "12class34",
         });
@@ -20,7 +20,7 @@ describe("Get /login Tests", () => {
 
     test("Test login failed", async () => {
         let result = await axios
-            .post("http://localhost:3000/api/login", {
+            .post("http://localhost:3001/api/login", {
                 username: "aahmad",
                 password: "13clascvfe",
             })
@@ -31,7 +31,7 @@ describe("Get /login Tests", () => {
 
     test("Test login with no inputs", async () => {
         let result = await axios
-            .post("http://localhost:3000/api/login", {
+            .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
             })
@@ -43,12 +43,12 @@ describe("Get /login Tests", () => {
 
 describe("GET /messages Tests", () => {
     test("get messages as admin", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "admin",
             password: "12class34",
         });
         let authToken = result.data;
-        let getdata = await axios.get("http://localhost:3000/api/messages", {
+        let getdata = await axios.get("http://localhost:3001/api/messages", {
             headers: {
                 Cookie: `contact-token =  ${authToken}`,
             },
@@ -58,12 +58,12 @@ describe("GET /messages Tests", () => {
     });
 
     test("get messages as normal user", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "aahmad",
             password: "12class34",
         });
         let authToken = result.data;
-        let getdata = await axios.get("http://localhost:3000/api/messages", {
+        let getdata = await axios.get("http://localhost:3001/api/messages", {
             headers: {
                 Cookie: `contact-token =  ${authToken}`,
             },
@@ -73,12 +73,12 @@ describe("GET /messages Tests", () => {
     });
 
     test("get messages from user with no messages", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "mahmoud",
             password: "12class34",
         });
         let authToken = result.data;
-        let getdata = await axios.get("http://localhost:3000/api/messages", {
+        let getdata = await axios.get("http://localhost:3001/api/messages", {
             headers: {
                 Cookie: `contact-token =  ${authToken}`,
             },
@@ -89,7 +89,7 @@ describe("GET /messages Tests", () => {
 
     test("get messages without user", async () => {
         let result = await axios
-            .post("http://localhost:3000/api/login", {
+            .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
             })
@@ -102,7 +102,7 @@ describe("GET /messages Tests", () => {
 describe("GET /contacts Tests", () => {
     test("get contacts with no user", async () => {
         let result = await axios
-            .post("http://localhost:3000/api/login", {
+            .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
             })
@@ -112,12 +112,12 @@ describe("GET /contacts Tests", () => {
     });
 
     test("get contacts", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "admin",
             password: "12class34",
         });
         let authToken = result.data;
-        let res = await axios.get("http://localhost:3000/api/contacts", {
+        let res = await axios.get("http://localhost:3001/api/contacts", {
             headers: {
                 Cookie: `contact-token =  ${authToken}`,
             },
@@ -129,13 +129,13 @@ describe("GET /contacts Tests", () => {
 
 describe("POST /messages Tests", () => {
     test("Sending a message successfully", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "admin",
             password: "12class34",
         });
         let authToken = result.data;
         let res = await axios.post(
-            "http://localhost:3000/api/messages",
+            "http://localhost:3001/api/messages",
             {
                 message: "Testing the api",
                 receiver: 3,
@@ -152,7 +152,7 @@ describe("POST /messages Tests", () => {
 
     test("Sending a message without user", async () => {
         let result = await axios
-            .post("http://localhost:3000/api/login", {
+            .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
             })
@@ -162,14 +162,14 @@ describe("POST /messages Tests", () => {
     });
 
     test("Sending a message unsuccessfully", async () => {
-        let result = await axios.post("http://localhost:3000/api/login", {
+        let result = await axios.post("http://localhost:3001/api/login", {
             username: "admin",
             password: "12class34",
         });
         let authToken = result.data;
         let res = await axios
             .post(
-                "http://localhost:3000/api/messages",
+                "http://localhost:3001/api/messages",
                 {
                     message: "Testing the api",
                     receiver: 8,
@@ -190,18 +190,18 @@ describe("POST /messages Tests", () => {
 describe("POST /messages Tests", () => {
     test("Test logout successfuly", async () => {
         let result = await axios
-            .post("http://localhost:3000/api/login", {
+            .post("http://localhost:3001/api/login", {
                 username: "aahmad",
                 password: "12class34",
             })
             .catch(function (e) {
                 expect(e.response.status).toBe(200);
             });
-        let res = await axios.post("http://localhost:3000/api/logout");
+        let res = await axios.post("http://localhost:3001/api/logout");
         let authToken = result.data;
         let res2 = await axios
             .post(
-                "http://localhost:3000/api/messages",
+                "http://localhost:3001/api/messages",
                 {
                     message: "Testing the api",
                     receiver: 3,
