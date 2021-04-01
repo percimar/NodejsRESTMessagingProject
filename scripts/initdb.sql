@@ -1,6 +1,7 @@
 
 DROP DATABASE IF EXISTS testjenkins;
 CREATE DATABASE testjenkins;
+USE testjenkins;
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users
