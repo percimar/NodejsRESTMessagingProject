@@ -1,5 +1,6 @@
 DROP DATABASE IF EXISTS `jenkins`;
 CREATE DATABASE `jenkins`;
+USE `jenkins`;
 
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
