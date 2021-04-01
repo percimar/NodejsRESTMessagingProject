@@ -1,19 +1,6 @@
-
-DROP DATABASE IF EXISTS testjenkins;
-CREATE DATABASE testjenkins;
-USE testjenkins;
-
-DROP TABLE IF EXISTS users;
-CREATE TABLE users
-(
-  id INT NOT NULL,
-  username VARCHAR(64) NOT NULL,
-  password VARCHAR(64) NOT NULL,
-  role VARCHAR(64) NOT NULL,
-  PRIMARY KEY (id)
-);DROP DATABASE IF EXISTS `jenkins`;
-CREATE DATABASE `jenkins`;
-USE `jenkins`;
+DROP DATABASE IF EXISTS `testjenkins`;
+CREATE DATABASE `testjenkins`;
+USE `testjenkins`;
 
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
@@ -70,23 +57,3 @@ ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
-
-
-DROP TABLE IF EXISTS messages;
-CREATE TABLE messages
-(
-  id INT NOT NULL,
-  from_user INT NOT NULL,
-  to_user INT NOT NULL,
-  user_message VARCHAR(512) NOT NULL,
-  sent_at DATETIME NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (from_user) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (to_user) REFERENCES users(id) ON DELETE CASCADE
-);
-
-INSERT INTO users (id, username, password, role) VALUES 
-(1, 'admin', '2e150d98a463a6b6c86582a38791c6341117be6f', 'admin'),
-(2, 'aahmad', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'),
-(3, 'asmar', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular'),
-(4, 'mahmoud', '17af9a2a5ce9c3b6c35619eedb747fa254382578', 'regular');
