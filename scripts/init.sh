@@ -1,2 +1,4 @@
 #!/bin/sh
-echo IT WORKS!~!!!;
+echo Starting init script
+./deploy.sh
+echo End of init script
