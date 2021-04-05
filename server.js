@@ -156,6 +156,7 @@ app.post("/api/login", (req, res) => {
             "SELECT * FROM users WHERE username = ? AND password = ?",
             [u, p],
             function (error, results, fields) {
+                console.log(`error: ${error}\nresults: ${results}\nfields: ${fields}`);
                 if (results.length > 0) {
                     let userInfo = {
                         name: results[0].username,
