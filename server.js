@@ -33,7 +33,7 @@ app.get("/api/contacts", (req, res) => {
         if (userDetails) {
             logMessage("All Contacts");
             handleConnect();
-            connection.query("SELECT * FROM users", function (error, results, fields) {
+            connection.query("SELECT * FROM users", function (error, results) {
                 if (results.length > 0) {
                     results.map((user) => allContacts.push(user));
                     res.send({ allContacts: allContacts, user: userDetails });
@@ -64,7 +64,7 @@ app.get("/api/messages", (req, res) => {
                                     FROM messages AS m 
                                     JOIN users AS u1 ON u1.id = m.sender 
                                     JOIN users AS u2 ON u2.id = m.receiver`,
-                    function (error, results, fields) {
+                    function (error, results) {
                         if (results.length > 0) {
                             results.map((user) => allMessages.push(user));
                             res.send({ allMessages: allMessages, user: userDetails });
@@ -83,7 +83,7 @@ app.get("/api/messages", (req, res) => {
                                     JOIN users AS u1 ON u1.id = m.sender 
                                     JOIN users AS u2 ON u2.id = m.receiver 
                                     WHERE receiver = ${userDetails.id} or sender = ${userDetails.id}`,
-                    function (error, results, fields) {
+                    function (error, results) {
                         if (results.length > 0) {
                             results.map((message) => allMessages.push(message));
                             // console.log("helo" + results)
@@ -118,7 +118,7 @@ app.post("/api/messages", async (req, res) => {
                 await handleConnect();
                 await connection.query(
                     `INSERT INTO messages (message, sender, receiver, date) VALUES ('${message}','${sender}','${receiver}','${date.toMysqlFormat()}');`,
-                    function (error, results, fields) {
+                    function (error) {
                         console.log("error", error);
                         if (!error) {
                             res.status(201);

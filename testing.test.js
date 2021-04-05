@@ -4,9 +4,8 @@
 
 */
 
-const { test, expect } = require("@jest/globals");
+const { test, expect, describe } = require("@jest/globals");
 let axios = require("axios");
-let mysql = require("mysql");
 axios.defaults.adapter = require("axios/lib/adapters/http");
 
 describe("Get /login Tests", () => {
@@ -19,7 +18,7 @@ describe("Get /login Tests", () => {
     });
 
     test("Test login failed", async () => {
-        let result = await axios
+        await axios
             .post("http://localhost:3001/api/login", {
                 username: "aahmad",
                 password: "13clascvfe",
@@ -30,7 +29,7 @@ describe("Get /login Tests", () => {
     });
 
     test("Test login with no inputs", async () => {
-        let result = await axios
+        await axios
             .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
@@ -88,7 +87,7 @@ describe("GET /messages Tests", () => {
     });
 
     test("get messages without user", async () => {
-        let result = await axios
+        await axios
             .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
@@ -101,7 +100,7 @@ describe("GET /messages Tests", () => {
 
 describe("GET /contacts Tests", () => {
     test("get contacts with no user", async () => {
-        let result = await axios
+        await axios
             .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
@@ -151,7 +150,7 @@ describe("POST /messages Tests", () => {
     });
 
     test("Sending a message without user", async () => {
-        let result = await axios
+        await axios
             .post("http://localhost:3001/api/login", {
                 username: null,
                 password: null,
@@ -167,7 +166,7 @@ describe("POST /messages Tests", () => {
             password: "12class34",
         });
         let authToken = result.data;
-        let res = await axios
+        await axios
             .post(
                 "http://localhost:3001/api/messages",
                 {
@@ -197,9 +196,9 @@ describe("POST /messages Tests", () => {
             .catch(function (e) {
                 expect(e.response.status).toBe(200);
             });
-        let res = await axios.post("http://localhost:3001/api/logout");
+        await axios.post("http://localhost:3001/api/logout");
         let authToken = result.data;
-        let res2 = await axios
+        await axios
             .post(
                 "http://localhost:3001/api/messages",
                 {

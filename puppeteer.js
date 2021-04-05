@@ -9,7 +9,7 @@ async function test() {
     let loginButton = await page.$("#login-button")
     await loginButton.click()
     await page.waitForNavigation()
-    let result = await page.url()
+    await page.url()
     await page.select('#contact-list', "4")
     await page.type('#txtMessage', "This is a test message")
     let submitButton = await page.$("#submitMessage")
