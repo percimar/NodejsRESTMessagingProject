@@ -1,12 +1,12 @@
 #!/bin/sh
 echo Starting init script
 set -e
-echo "PWD: " -n
+echo "PWD: "
 pwd
-echo "\nUSER: " -n
+echo "USER: "
 whoami
-echo "\nNode: " -n
+echo "Node: "
 which node
-mkdir /tmp/TestChatApp - p
+mkdir /tmp/TestChatApp -p
 cp server.js testing.test.js puppeteer.js package.json package-lock.json .eslintrc.js webfiles/ /tmp/TestChatApp -r
 echo End of init script
