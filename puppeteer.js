@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer")
 
 async function test() {
-    const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
     const page = await browser.newPage()
     await page.goto("http://localhost:3000/")
     await page.type("#username", "aahmad");
