@@ -4,7 +4,7 @@
 
 */
 
-const { test, expect, describe } = require("@jest/globals");
+const { test, expect } = require("@jest/globals");
 const puppeteer = require("puppeteer")
 
 test("Scenario 1", async () => {
