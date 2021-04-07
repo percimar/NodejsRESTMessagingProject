@@ -42,14 +42,14 @@ function loadMessages() {
         success: function (data) {
             $("#noMessages").html(``)
             let receivedMsg = `
-            <table style="width:100%;text-align: center;" id="sent_messages_list">
+            <table style="width:100%;text-align: center;" id="received_messages">
             <tr>
                 <th>Message</th>
                 <th>Sender</th>
                 <th>Received At</th>
             </tr>`
             let sentMsgs = `
-            <table style="width:100%;text-align: center;" id="sent_messages_list">
+            <table style="width:100%;text-align: center;" id="sent_messages">
             <tr>
                 <th>Message</th>
                 <th>Sent At</th>
@@ -69,7 +69,7 @@ function loadMessages() {
                 if (data.allMessages.length > 0) {
                     if (data.user.name === "admin") {
                         $("#data").attr('style', 'display: none;')
-                        allMsg +=  
+                        allMsg +=
                             `<tr>
                             <td>${a.message}</td>
                             <td>${a.senderName}</td>
@@ -125,7 +125,6 @@ function loadMessages() {
     })
 }
 
-var highestMessage;
 
 async function submitMessage() {
     let message = $("#txtMessage").val().trim();
