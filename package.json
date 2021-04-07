@@ -18,32 +18,21 @@
   },
   "homepage": "https://github.com/percimar/CP4480-Emerging-Trends-Project#readme",
   "dependencies": {
-    "axios": "^0.21.1",
     "cookie-parser": "^1.4.5",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.18.1",
-    "puppeteer": "^8.0.0"
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "axios": "^0.21.1",
     "eslint": "^7.23.0",
     "jest": "^26.6.3",
-    "jest-html-reporter": "^3.3.0"
+    "jest-puppeteer": "^4.4.0",
+    "puppeteer": "^8.0.0"
   },
   "jest": {
-    "collectCoverage": true,
-    "coverageReporters": [
-      "lcov"
-    ],
-    "reporters": [
-      "default",
-      [
-        "./node_modules/jest-html-reporter",
-        {
-          "pageTitle": "Test Report"
-        }
-      ]
-    ]
+    "collectCoverage": false,
+    "preset": "jest-puppeteer"
   }
 }

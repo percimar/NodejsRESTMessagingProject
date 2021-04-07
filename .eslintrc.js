@@ -10,5 +10,11 @@ module.exports = {
         "ecmaVersion": 12
     },
     "rules": {
-    }
+    },
+    globals: {
+        page: true,
+        browser: true,
+        context: true,
+        jestPuppeteer: true,
+    },
 };
