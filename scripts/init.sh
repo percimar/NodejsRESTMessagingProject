@@ -8,5 +8,5 @@ whoami
 echo "Node: "
 which node
 mkdir /tmp/TestChatApp -p
-cp server.js testing.test.js puppeteer.js package.json package-lock.json .eslintrc.js webfiles/ /tmp/TestChatApp -r
+cp server.js testing.test.js puppeteer.test.js package.json package-lock.json .eslintrc.js webfiles/ /tmp/TestChatApp -r
 echo End of init script
