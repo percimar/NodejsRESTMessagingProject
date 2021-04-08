@@ -171,8 +171,8 @@ app.post("/api/login", (req, res) => {
                     res.status(200);
                     res.send(token);
                 } else {
-                    // res.status(401);
-                    // res.send("Invalid Credentials");
+                    res.status(401);
+                    res.send("Invalid Credentials");
                 }
             }
         );

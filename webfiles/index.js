@@ -9,7 +9,7 @@ function doLogin() {
 
     $.ajax({
         url: "/api/login",
-        method: "post",
+        // method: "post",
         contentType: "application/json",
         data: JSON.stringify(loginRequest),
         success: function () {
