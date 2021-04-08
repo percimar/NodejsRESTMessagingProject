@@ -13,7 +13,9 @@ const port = portArg ? portArg : 3001;
 const appSecretKey = "dfhvbejr34r4ifh3nrjg4n3jnk3fcj49jve23hbhgcaslak";
 let connection;
 
-app.use(express.static("webfiles"));
+if (port == 3001) {
+    app.use(express.static("webfiles"));
+}
 app.use(express.json());
 app.use(cookieParser());
 
