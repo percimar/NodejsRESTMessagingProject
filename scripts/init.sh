@@ -8,6 +8,6 @@ echo "Node: "
 which node
 npm install
 mkdir /tmp/TestChatApp -p
-ln -s ./node_modules /tmp/TestChatApp/node_modules
+ln -sf /var/lib/jenkins/workspace/CP4480\ Chat\ App\ Pipeline/node_modules/ /tmp/TestChatApp/node_modules  
 cp server.js axios.test.js puppeteer.test.js package.json package-lock.json .eslintrc.js webfiles/ /tmp/TestChatApp -r
 echo End of init script
