@@ -2,9 +2,9 @@
 echo Start of deploy script
 set -e
 mysql -u chatapp -p12class34 jenkins < ./scripts/db.sql
-cp server.js package.json package-lock.json /opt/ChatApp
 cp webfiles/* /var/www/chatapp/ -r
+cp package.json package-lock.json /opt/ChatApp
 cd /opt/ChatApp
 npm install
-systemctl restart chatapp
+cp /var/lib/jenkins/workspace/CP4480\ Chat\ App\ Pipeline/server.js ./server.js
 echo End of deploy script
