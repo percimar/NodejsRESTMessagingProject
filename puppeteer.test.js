@@ -9,7 +9,7 @@ require("expect-puppeteer")
 
 test("Scenario 1", async () => {
     const TEST_MESSAGE = Math.random().toString(36).substring(2, 10);
-    const BASE_URL = "http://192.168.100.20:3001";
+    const BASE_URL = "http://localhost:3001";
 
     await page.goto(BASE_URL);
     await page.type("#username", "aahmad");
