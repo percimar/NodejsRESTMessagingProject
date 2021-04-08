@@ -2,7 +2,7 @@ function doLogin() {
     let un = $("#username").val();
     let pw = $("#password").val();
 
-    loginRequest = {
+    const loginRequest = {
         username: un,
         password: pw
     }
@@ -12,10 +12,10 @@ function doLogin() {
         method: "post",
         contentType: "application/json",
         data: JSON.stringify(loginRequest),
-        success: function (result) {
+        success: function () {
             window.location.href = "/amaChat.html"
         },
-        error: function (j, t, e) {
+        error: function () {
             alert("Go away!")
         }
 

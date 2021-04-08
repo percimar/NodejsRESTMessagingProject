@@ -27,7 +27,7 @@ function loadContacts() {
             }
             $("#contact-list").html(listContent)
         },
-        error: function (j, t, e) {
+        error: function () {
             window.alert("Error, Invalid Details")
             window.location.href = '/'
         }
@@ -106,7 +106,7 @@ function loadMessages() {
                             <td>There are no messages</td>
                             <td></td>
                         </tr>`
-                    sentMsg +=
+                    sentMsgs +=
                         `<tr>
                             <td>There are no messages</td>
                             <td></td>
@@ -119,13 +119,14 @@ function loadMessages() {
             $("#sent_messages_list").html(sentMsgs)
             $("#received_messages_list").html(receivedMsg)
         },
-        error: function (j, t, e) {
+        error: function () {
             $("#noMessages").html(`<h1 style="text-align:center">There are no messages</h1>`)
         }
     })
 }
 
 
+// eslint-disable-next-line no-unused-vars
 async function submitMessage() {
     let message = $("#txtMessage").val().trim();
     let receiver = await $("#contact-list  option:selected").val();
@@ -169,10 +170,10 @@ function doLogout() {
     $.ajax({
         url: "/api/logout",
         method: "post",
-        success: function (result) {
+        success: function () {
             window.location.href = '/'
         },
-        error: function (x, t, s) {
+        error: function () {
             window.location.href = '/'
         }
     })
