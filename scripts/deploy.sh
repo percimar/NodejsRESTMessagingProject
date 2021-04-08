@@ -1,7 +1,7 @@
 #!/bin/sh
 echo Start of deploy script
 set -e
-# mysql -u chatapp -p12class34 jenkins < ./scripts/db.sql
+mysql -u chatapp -p12class34 jenkins < ./scripts/db.sql
 cp webfiles/* /var/www/chatapp/ -r
 cp package.json package-lock.json /opt/ChatApp
 cd /opt/ChatApp
