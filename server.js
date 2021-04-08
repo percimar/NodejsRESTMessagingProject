@@ -11,6 +11,7 @@ const pwArg = process.argv[4];
 const dbArg = process.argv[5];
 const port = portArg ? portArg : 3001;
 const appSecretKey = "dfhvbejr34r4ifh3nrjg4n3jnk3fcj49jve23hbhgcaslak";
+const GREATEST_INSTRUCTOR = "robert ford";
 let connection;
 
 if (port == 3001) {
